@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для Сабины</title>
+    <style>
+        /* Базовые стили */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Georgia', serif;
+            background-color: #000;
+            overflow: hidden; /* Убираем скролл */
+        }
+
+        /* Видео на фоне */
+        #bg-video {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translateX(-50%) translateY(-50%);
+            z-index: -2;
+            object-fit: cover;
+        }
+
+        /* Затемнение видео, чтобы текст и конверт читались лучше */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        /* Центрирование контента */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            flex-direction: column;
+        }
+
+        /* Стили конверта */
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .envelope {
+            width: 300px;
+            height: 200px;
+            background: #d4a373;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .envelope::before { /* Левая и правая части конверта */
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-top: 100px solid transparent;
+            border-bottom: 100px solid transparent;
+            border-left: 150px solid #c89566;
+            z-index: 3;
+        }
+
+        .envelope::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-top: 100px solid transparent;
+            border-bottom: 100px solid transparent;
+            border-right: 150px solid #bc8b5c;
+            z-index: 3;
+        }
+
+        .flap { /* Верхний клапан */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 100px solid #e6b98a;
+            transform-origin: top;
+            transition: transform 0.6s ease-in-out;
+            z-index: 4;
+        }
+
+        .pocket { /* Нижняя часть (карман) */
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-bottom: 100px solid #b38356;
+            z-index: 4;
+        }
+
+        .hint {
+            color: #fff;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* Анимация открытия */
+        .envelope-wrapper.open .flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .envelope-wrapper.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Текст письма */
+        .message-container {
+            position: absolute;
+            width: 80%;
+            max-width: 600px;
+            color: #fff;
+            font-size: 1.5rem;
+            line-height: 1.8;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            pointer-events: none;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        }
+
+        .message-container.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Видео фон. Замени 'background.mp4' на название своего файла -->
+    <video autoplay loop muted playsinline id="bg-video">
+        <source src="background.mp4" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+
+    <!-- Музыка. Замени 'music.mp3' на название своего файла -->
+    <audio id="bg-music" src="music.mp3"></audio>
+
+    <div class="container">
+        <!-- Конверт -->
+        <div class="envelope-wrapper" id="envelope">
+            <div class="envelope">
+                <div class="flap"></div>
+                <div class="pocket"></div>
+            </div>
+            <div class="hint">Коснись конверта</div>
+        </div>
+
+        <!-- Контейнер для текста -->
+        <div class="message-container" id="message-container">
+            <div id="text-output"></div>
+        </div>
+    </div>
+
+    <script>
+        const envelope = document.getElementById('envelope');
+        const messageContainer = document.getElementById('message-container');
+        const textOutput = document.getElementById('text-output');
+        const music = document.getElementById('bg-music');
+        const video = document.getElementById('bg-video');
+
+        // Текст, который будет печататься
+        const message = "Сабина, ты самая невероятная девушка в мире. Каждый день рядом с тобой — это особенная история, и я хочу, чтобы эта история длилась вечно...";
+        
+        let i = 0;
+        const speed = 70; // Скорость печати (миллисекунды на символ)
+
+        function typeWriter() {
+            if (i < message.length) {
+                textOutput.innerHTML += message.charAt(i);
+                i++;
+                setTimeout(typeWriter, speed);
+            }
+        }
+
+        envelope.addEventListener('click', () => {
+            // 1. Включаем музыку (браузер теперь разрешит)
+            music.play();
+            
+            // 2. Открываем конверт
+            envelope.classList.add('open');
+
+            // 3. Ждем пока конверт откроется, скрываем его и показываем текст
+            setTimeout(() => {
+                envelope.classList.add('hidden');
+                
+                setTimeout(() => {
+                    envelope.style.display = 'none'; // Убираем из DOM
+                    messageContainer.classList.add('visible');
+                    typeWriter(); // Запускаем эффект печати
+                }, 1000);
+                
+            }, 800); // Время анимации клапана
+        });
+    </script>
+</body>
+</html>
