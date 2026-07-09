@@ -16,38 +16,40 @@
         }
 
         /* Видео на фоне */
-        #bg-video {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            transform: translateX(-50%) translateY(-50%);
-            z-index: -2;
-            object-fit: cover;
-        }
+#bg-video {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 1; /* Было -2, стало 1 */
+    object-fit: cover;
+}
 
-        /* Затемнение видео, чтобы текст и конверт читались лучше */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: -1;
-        }
+/* Затемнение видео */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 2; /* Было -1, стало 2 */
+}
 
-        /* Центрирование контента */
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            flex-direction: column;
-        }
+/* Центрирование контента */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    flex-direction: column;
+    position: relative; /* Добавили position */
+    z-index: 3; /* Сделали контейнер выше всех */
+}
 
         /* Стили конверта */
         .envelope-wrapper {
