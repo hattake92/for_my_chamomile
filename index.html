@@ -191,7 +191,7 @@
         const messageContainer = document.getElementById('message-container');
         const textOutput = document.getElementById('text-output');
         const music = document.getElementById('bg-music');
-        const video = document.getElementById('bg-video');
+        const video = document.getElementById('bg-video'); // Видео по ID
 
         // Текст, который будет печататься
         const message = "Сабинка!!! Если ты сейчас не улыбаешься, значит этот сайт сломался, и мне придется всё переделывать. А если серьезно — ты лучшее, что есть в моей жизни.";
@@ -208,9 +208,10 @@
         }
 
         envelope.addEventListener('click', () => {
-            // 1. Включаем музыку (браузер теперь разрешит)
+            // 1. Включаем музыку и принудительно перезагружаем видео
             music.play();
-            video.play();
+            video.load(); // <-- ГАРАНТИРУЕТ ПЕРЕЗАГРУЗКУ ИСТОЧНИКА
+            video.play(); // <-- ВКЛЮЧАЕТ ВОСПРОИЗВЕДЕНИЕ
             
             // 2. Открываем конверт
             envelope.classList.add('open');
